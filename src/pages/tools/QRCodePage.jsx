@@ -7,17 +7,18 @@ import Input from '../../components/ui/Input';
 import Select from '../../components/ui/Select';
 import Button from '../../components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/Card';
+import './QRCodePage.css';
 
 const QRCodeItem = ({ id, name, serialNumber, category }) => {
   const qrCodeUrl = `${window.location.origin}/inventory/${id}`;
   
   return (
-    <div className="border border-gray-200 rounded-lg p-4 flex flex-col items-center">
+    <div className="qr-item">
       <QRCode value={qrCodeUrl} size={150} />
-      <div className="mt-4 text-center">
-        <h3 className="font-medium text-gray-900">{name}</h3>
-        <p className="text-sm text-gray-500">{category}</p>
-        <p className="text-xs text-gray-500 mt-1">{serialNumber}</p>
+      <div className="qr-item-info">
+        <h3>{name}</h3>
+        <p className="qr-category">{category}</p>
+        <p className="qr-serial">{serialNumber}</p>
       </div>
     </div>
   );
@@ -29,7 +30,6 @@ const QRCodePage = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const printRef = useRef(null);
   
-  // Filter items based on search term and category
   const filteredItems = items.filter(item => {
     const matchesSearch = 
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -40,22 +40,20 @@ const QRCodePage = () => {
     return matchesSearch && matchesCategory;
   });
   
-  // Get unique categories for filter
   const categories = Array.from(new Set(items.map(item => item.category)));
   
-  // Handle print function
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
   });
   
   return (
-    <div className="animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-semibold flex items-center gap-2">
+    <div className="qr-page">
+      <div className="qr-header">
+        <h1>
           <QrCode size={24} />
-          QR Code Generator
+          <span>QR Code Generator</span>
         </h1>
-        <div className="flex items-center gap-2">
+        <div className="qr-actions">
           <Button
             variant="outline"
             icon={<Printer size={18} />}
@@ -67,16 +65,16 @@ const QRCodePage = () => {
       </div>
       
       {/* Filters */}
-      <Card className="mb-6">
-        <CardContent className="p-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+      <Card className="qr-filters">
+        <CardContent className="filters-content">
+          <div className="filters-grid">
+            <div className="search-container">
+              <Search className="search-icon" />
               <Input
                 placeholder="Search by name or serial number..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="search-input"
               />
             </div>
             
@@ -104,15 +102,15 @@ const QRCodePage = () => {
       </Card>
       
       {/* QR Codes Grid */}
-      <div ref={printRef} className="bg-white p-6 rounded-lg shadow-sm">
-        <h2 className="text-xl font-semibold mb-6">QR Codes for Inventory Items</h2>
+      <div ref={printRef} className="qr-codes-container">
+        <h2>QR Codes for Inventory Items</h2>
         
         {filteredItems.length === 0 ? (
-          <div className="text-center py-8">
-            <p className="text-gray-500">No items found matching your criteria</p>
+          <div className="qr-empty">
+            <p>No items found matching your criteria</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="qr-grid">
             {filteredItems.map(item => (
               <QRCodeItem
                 key={item.id}

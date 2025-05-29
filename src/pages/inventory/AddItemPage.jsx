@@ -6,6 +6,7 @@ import Input from '../../components/ui/Input';
 import Select from '../../components/ui/Select';
 import Button from '../../components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../../components/ui/Card';
+import './AddItemPage.css';
 
 const AddItemPage = () => {
   const navigate = useNavigate();
@@ -50,9 +51,9 @@ const AddItemPage = () => {
   };
   
   return (
-    <div className="animate-fade-in">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold">Add New Item</h1>
+    <div className="add-item-container">
+      <div className="add-item-header">
+        <h1>Add New Item</h1>
         <Button
           variant="outline"
           icon={<X size={18} />}
@@ -67,8 +68,8 @@ const AddItemPage = () => {
           <CardTitle>Item Information</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <CardContent className="form-content">
+            <div className="form-grid">
               <Input
                 label="Item Name"
                 name="name"
@@ -96,16 +97,13 @@ const AddItemPage = () => {
                 required
               />
               
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Description
-                </label>
+              <div className="form-textarea">
+                <label>Description</label>
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
                   rows={3}
-                  className="w-full rounded-md border border-gray-300 py-2 px-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
                 />
               </div>
               
@@ -186,22 +184,19 @@ const AddItemPage = () => {
                 onChange={handleChange}
               />
               
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Notes
-                </label>
+              <div className="form-textarea">
+                <label>Notes</label>
                 <textarea
                   name="notes"
                   value={formData.notes}
                   onChange={handleChange}
                   rows={3}
-                  className="w-full rounded-md border border-gray-300 py-2 px-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
                 />
               </div>
             </div>
           </CardContent>
           
-          <CardFooter className="flex justify-end space-x-4">
+          <CardFooter className="form-footer">
             <Button
               type="button"
               variant="outline"

@@ -1,0 +1,147 @@
+/* Mobile Overlay */
+.mobile-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background-color: rgba(75, 85, 99, 0.75);
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  inset: 0;
+  top: 0;
+  left: 0;
+  z-index: 50;
+  width: 16rem;
+  background-color: white;
+  border-right: 1px solid #e5e7eb;
+  transition: transform 300ms ease-in-out;
+  transform: translateX(-100%);
+}
+
+.sidebar.mobile-open {
+  transform: translateX(0);
+}
+
+@media (min-width: 1024px) {
+  .sidebar {
+    position: static;
+    height: 100vh;
+    transform: translateX(0);
+  }
+}
+
+.sidebar-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Sidebar Header */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 4rem;
+  padding: 0 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.sidebar-brand-icon {
+  background-color: #4f46e5;
+  color: white;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.sidebar-brand-text {
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+.sidebar-close-button {
+  color: #6b7280;
+  display: none;
+}
+
+.sidebar-close-button:hover {
+  color: #374151;
+}
+
+@media (max-width: 1023px) {
+  .sidebar-close-button {
+    display: block;
+  }
+}
+
+/* Navigation Links */
+.sidebar-nav {
+  flex: 1;
+  padding: 0.75rem 0.75rem 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: #374151;
+  transition: background-color 0.2s;
+}
+
+.sidebar-link:hover {
+  background-color: #f3f4f6;
+}
+
+.sidebar-link.active {
+  background-color: #e0e7ff;
+  color: #1e1b4b;
+}
+
+.sidebar-link-icon {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+  padding: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  width: 100%;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.logout-button:hover {
+  background-color: #f3f4f6;
+}

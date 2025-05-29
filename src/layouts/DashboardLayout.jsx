@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from '../components/layout/Sidebar';
 import Header from '../components/layout/Header';
+import './DashboardLayout.css';
 
 const DashboardLayout = () => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const location = useLocation();
 
-  // Generate page title based on route
   const getPageTitle = () => {
     const path = location.pathname;
     if (path === '/' || path === '/dashboard') return 'Dashboard';
@@ -27,19 +27,19 @@ const DashboardLayout = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
+    <div className="dashboard-layout">
       <Sidebar
         isMobileOpen={isMobileSidebarOpen}
         onCloseMobile={() => setIsMobileSidebarOpen(false)}
       />
 
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="dashboard-main">
         <Header
           onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
           title={getPageTitle()}
         />
 
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">
+        <main className="dashboard-content">
           <Outlet />
         </main>
       </div>

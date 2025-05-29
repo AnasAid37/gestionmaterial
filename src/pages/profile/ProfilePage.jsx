@@ -4,25 +4,15 @@ import { User, Mail, Key, Save, Shield } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../../components/ui/Card';
+import './ProfilePage.css';
 
-// Badge component for the profile page
 const Badge = ({ 
   variant = 'default', 
   children, 
   className = '' 
 }) => {
-  const baseStyles = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium';
-  
-  const variants = {
-    default: 'bg-gray-100 text-gray-800',
-    success: 'bg-success-100 text-success-800',
-    warning: 'bg-warning-100 text-warning-800',
-    error: 'bg-error-100 text-error-800',
-    info: 'bg-primary-100 text-primary-800',
-  };
-  
   return (
-    <span className={`${baseStyles} ${variants[variant]} ${className}`}>
+    <span className={`badge ${variant} ${className}`}>
       {children}
     </span>
   );
@@ -58,10 +48,7 @@ const ProfilePage = () => {
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     setIsUpdatingProfile(true);
-    
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
     alert('Profile updated successfully!');
     setIsUpdatingProfile(false);
   };
@@ -75,10 +62,7 @@ const ProfilePage = () => {
     }
     
     setIsUpdatingPassword(true);
-    
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
     alert('Password updated successfully!');
     setIsUpdatingPassword(false);
     setPasswordForm({
@@ -89,53 +73,53 @@ const ProfilePage = () => {
   };
   
   return (
-    <div className="animate-fade-in">
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold">Profile Settings</h1>
-        <p className="text-gray-500 mt-1">Manage your account settings and preferences</p>
+    <div className="profile-container">
+      <div className="profile-header">
+        <h1>Profile Settings</h1>
+        <p>Manage your account settings and preferences</p>
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="profile-grid">
         {/* Sidebar */}
-        <div className="lg:col-span-1">
+        <div className="profile-sidebar">
           <Card>
-            <CardContent className="p-6">
-              <div className="flex flex-col items-center">
-                <div className="h-20 w-20 rounded-full bg-primary-500 text-white flex items-center justify-center text-2xl font-medium mb-4">
+            <CardContent className="sidebar-content">
+              <div className="user-profile">
+                <div className="user-avatar">
                   {user?.name?.charAt(0) || 'U'}
                 </div>
-                <h2 className="text-xl font-semibold">{user?.name}</h2>
-                <p className="text-gray-500 mt-1">{user?.email}</p>
-                <div className="mt-3">
+                <h2>{user?.name}</h2>
+                <p className="user-email">{user?.email}</p>
+                <div className="user-badge">
                   <Badge variant="info" className="capitalize">{user?.role}</Badge>
                 </div>
               </div>
               
-              <div className="mt-6 border-t border-gray-200 pt-6">
-                <p className="text-sm text-gray-500">Account created</p>
-                <p className="font-medium">October 1, 2023</p>
+              <div className="account-info">
+                <p className="info-label">Account created</p>
+                <p className="info-value">October 1, 2023</p>
               </div>
               
-              <div className="mt-4">
-                <p className="text-sm text-gray-500">Last login</p>
-                <p className="font-medium">Today, 9:30 AM</p>
+              <div className="account-info">
+                <p className="info-label">Last login</p>
+                <p className="info-value">Today, 9:30 AM</p>
               </div>
             </CardContent>
           </Card>
         </div>
         
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="profile-main">
           {/* Profile Settings */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="card-title">
                 <User size={18} />
-                Profile Information
+                <span>Profile Information</span>
               </CardTitle>
             </CardHeader>
             <form onSubmit={handleUpdateProfile}>
-              <CardContent className="space-y-4">
+              <CardContent className="form-content">
                 <Input
                   label="Full Name"
                   name="name"
@@ -159,7 +143,7 @@ const ProfilePage = () => {
                   disabled
                 />
               </CardContent>
-              <CardFooter className="flex justify-end">
+              <CardFooter className="form-footer">
                 <Button
                   type="submit"
                   icon={<Save size={18} />}
@@ -174,13 +158,13 @@ const ProfilePage = () => {
           {/* Password Settings */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="card-title">
                 <Key size={18} />
-                Change Password
+                <span>Change Password</span>
               </CardTitle>
             </CardHeader>
             <form onSubmit={handleUpdatePassword}>
-              <CardContent className="space-y-4">
+              <CardContent className="form-content">
                 <Input
                   label="Current Password"
                   name="currentPassword"
@@ -208,7 +192,7 @@ const ProfilePage = () => {
                   required
                 />
               </CardContent>
-              <CardFooter className="flex justify-end">
+              <CardFooter className="form-footer">
                 <Button
                   type="submit"
                   icon={<Key size={18} />}
@@ -223,46 +207,46 @@ const ProfilePage = () => {
           {/* Notification Settings */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="card-title">
                 <Mail size={18} />
-                Notification Settings
+                <span>Notification Settings</span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
+            <CardContent className="notification-content">
+              <div className="notification-item">
                 <div>
-                  <p className="font-medium">Email Notifications</p>
-                  <p className="text-sm text-gray-500">Receive email alerts about inventory updates</p>
+                  <p className="notification-title">Email Notifications</p>
+                  <p className="notification-description">Receive email alerts about inventory updates</p>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" className="sr-only peer" defaultChecked />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+                <label className="toggle-switch">
+                  <input type="checkbox" className="toggle-input" defaultChecked />
+                  <span className="toggle-slider"></span>
                 </label>
               </div>
               
-              <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+              <div className="notification-item">
                 <div>
-                  <p className="font-medium">Maintenance Alerts</p>
-                  <p className="text-sm text-gray-500">Get notified when items need maintenance</p>
+                  <p className="notification-title">Maintenance Alerts</p>
+                  <p className="notification-description">Get notified when items need maintenance</p>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" className="sr-only peer" defaultChecked />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+                <label className="toggle-switch">
+                  <input type="checkbox" className="toggle-input" defaultChecked />
+                  <span className="toggle-slider"></span>
                 </label>
               </div>
               
-              <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+              <div className="notification-item">
                 <div>
-                  <p className="font-medium">Weekly Reports</p>
-                  <p className="text-sm text-gray-500">Receive weekly inventory summary reports</p>
+                  <p className="notification-title">Weekly Reports</p>
+                  <p className="notification-description">Receive weekly inventory summary reports</p>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" className="sr-only peer" />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+                <label className="toggle-switch">
+                  <input type="checkbox" className="toggle-input" />
+                  <span className="toggle-slider"></span>
                 </label>
               </div>
             </CardContent>
-            <CardFooter className="flex justify-end">
+            <CardFooter className="form-footer">
               <Button>
                 Save Preferences
               </Button>

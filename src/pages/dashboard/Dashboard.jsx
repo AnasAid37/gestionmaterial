@@ -15,21 +15,22 @@ import { useAuthStore } from '../../stores/authStore';
 import { useInventoryStore } from '../../stores/inventoryStore';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
+import './Dashboard.css';
 
 const StatCard = ({ title, value, icon, description, color }) => {
   return (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardContent className="p-6">
-        <div className="flex items-center justify-between">
+    <Card className="stat-card">
+      <CardContent className="stat-card-content">
+        <div className="stat-card-header">
           <div>
-            <p className="text-sm font-medium text-gray-500">{title}</p>
-            <p className="text-3xl font-bold mt-1">{value}</p>
+            <p className="stat-card-title">{title}</p>
+            <p className="stat-card-value">{value}</p>
           </div>
-          <div className={`p-3 rounded-full ${color}`}>
+          <div className={`stat-card-icon ${color}`}>
             {icon}
           </div>
         </div>
-        <p className="text-sm text-gray-600 mt-4">{description}</p>
+        <p className="stat-card-description">{description}</p>
       </CardContent>
     </Card>
   );
@@ -43,16 +44,16 @@ const RecentActivityItem = ({
   description,
 }) => {
   return (
-    <div className="flex items-start gap-4 py-3 border-b border-gray-100 last:border-0">
-      <div className={`p-2 rounded-full ${iconColor} shrink-0`}>
+    <div className="activity-item">
+      <div className={`activity-icon ${iconColor}`}>
         {icon}
       </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between">
-          <p className="font-medium text-gray-900 truncate">{title}</p>
-          <p className="text-xs text-gray-500">{timestamp}</p>
+      <div className="activity-content">
+        <div className="activity-header">
+          <p className="activity-title">{title}</p>
+          <p className="activity-timestamp">{timestamp}</p>
         </div>
-        <p className="text-sm text-gray-600 mt-1">{description}</p>
+        <p className="activity-description">{description}</p>
       </div>
     </div>
   );
@@ -73,7 +74,6 @@ const Dashboard = () => {
     loadData();
   }, [fetchItems]);
   
-  // Calculate statistics
   const totalItems = items.length;
   const availableItems = items.filter(item => item.status === 'available').length;
   const maintenanceItems = items.filter(item => item.status === 'maintenance').length;
@@ -97,51 +97,51 @@ const Dashboard = () => {
   const statusDistribution = getStatusDistribution();
   
   return (
-    <div className="animate-fade-in space-y-6">
+    <div className="dashboard-container">
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="stats-grid">
         <StatCard
           title="Total Equipment"
           value={totalItems}
-          icon={<Package className="h-6 w-6 text-white" />}
+          icon={<Package className="stat-icon" />}
           description="Total items in the inventory system"
-          color="bg-primary-600"
+          color="bg-primary"
         />
         <StatCard
           title="Available"
           value={availableItems}
-          icon={<CheckCircle className="h-6 w-6 text-white" />}
+          icon={<CheckCircle className="stat-icon" />}
           description="Items ready for use or assignment"
-          color="bg-success-600"
+          color="bg-success"
         />
         <StatCard
           title="In Use"
           value={inUseItems}
-          icon={<Clock className="h-6 w-6 text-white" />}
+          icon={<Clock className="stat-icon" />}
           description="Items currently assigned or in use"
-          color="bg-accent-500"
+          color="bg-accent"
         />
         <StatCard
           title="Maintenance"
           value={maintenanceItems}
-          icon={<AlertTriangle className="h-6 w-6 text-white" />}
+          icon={<AlertTriangle className="stat-icon" />}
           description="Items under repair or maintenance"
-          color="bg-warning-500"
+          color="bg-warning"
         />
       </div>
       
       {/* Main Dashboard Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="dashboard-content">
         {/* Quick Actions */}
-        <Card className="lg:col-span-1">
+        <Card className="quick-actions-card">
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="quick-actions-content">
             {(userRole === 'management' || userRole === 'storekeeper') && (
               <Button
                 icon={<Plus size={18} />}
-                className="w-full justify-start"
+                className="quick-action-button"
                 as={Link}
                 to="/inventory/add"
               >
@@ -152,7 +152,7 @@ const Dashboard = () => {
             {userRole === 'trainer' && (
               <Button
                 icon={<Repeat size={18} />}
-                className="w-full justify-start"
+                className="quick-action-button"
                 as={Link}
                 to="/rooms"
               >
@@ -163,7 +163,7 @@ const Dashboard = () => {
             <Button
               variant="outline"
               icon={<Package size={18} />}
-              className="w-full justify-start"
+              className="quick-action-button"
               as={Link}
               to={userRole === 'trainer' ? '/rooms' : '/inventory'}
             >
@@ -174,7 +174,7 @@ const Dashboard = () => {
               <Button
                 variant="outline"
                 icon={<BarChart2 size={18} />}
-                className="w-full justify-start"
+                className="quick-action-button"
                 as={Link}
                 to="/reports"
               >
@@ -185,7 +185,7 @@ const Dashboard = () => {
             <Button
               variant="outline"
               icon={<QrCode size={18} />}
-              className="w-full justify-start"
+              className="quick-action-button"
               as={Link}
               to="/qrcode"
             >
@@ -195,79 +195,77 @@ const Dashboard = () => {
         </Card>
         
         {/* Status Distribution */}
-        <Card className="lg:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between">
+        <Card className="status-card">
+          <CardHeader className="status-card-header">
             <CardTitle>Equipment Status</CardTitle>
             <Button variant="ghost" size="sm" as={Link} to="/inventory" icon={<ArrowRight size={16} />}>
               View All
             </Button>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {/* Chart would go here in a real implementation */}
-              {/* For now, showing a simple visualization with bars */}
-              <div className="space-y-3">
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-sm font-medium">Available</span>
-                    <span className="text-sm font-medium">{statusDistribution.available} items</span>
+            <div className="status-content">
+              <div className="status-bars">
+                <div className="status-bar">
+                  <div className="status-bar-header">
+                    <span>Available</span>
+                    <span>{statusDistribution.available} items</span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div className="status-bar-track">
                     <div 
-                      className="bg-success-600 h-2.5 rounded-full" 
+                      className="status-bar-progress bg-success" 
                       style={{ width: `${(statusDistribution.available / totalItems) * 100}%` }}
                     ></div>
                   </div>
                 </div>
                 
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-sm font-medium">In Use</span>
-                    <span className="text-sm font-medium">{statusDistribution['in-use']} items</span>
+                <div className="status-bar">
+                  <div className="status-bar-header">
+                    <span>In Use</span>
+                    <span>{statusDistribution['in-use']} items</span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div className="status-bar-track">
                     <div 
-                      className="bg-accent-500 h-2.5 rounded-full" 
+                      className="status-bar-progress bg-accent" 
                       style={{ width: `${(statusDistribution['in-use'] / totalItems) * 100}%` }}
                     ></div>
                   </div>
                 </div>
                 
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-sm font-medium">Maintenance</span>
-                    <span className="text-sm font-medium">{statusDistribution.maintenance} items</span>
+                <div className="status-bar">
+                  <div className="status-bar-header">
+                    <span>Maintenance</span>
+                    <span>{statusDistribution.maintenance} items</span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div className="status-bar-track">
                     <div 
-                      className="bg-warning-500 h-2.5 rounded-full" 
+                      className="status-bar-progress bg-warning" 
                       style={{ width: `${(statusDistribution.maintenance / totalItems) * 100}%` }}
                     ></div>
                   </div>
                 </div>
                 
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-sm font-medium">Retired</span>
-                    <span className="text-sm font-medium">{statusDistribution.retired} items</span>
+                <div className="status-bar">
+                  <div className="status-bar-header">
+                    <span>Retired</span>
+                    <span>{statusDistribution.retired} items</span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div className="status-bar-track">
                     <div 
-                      className="bg-gray-500 h-2.5 rounded-full" 
+                      className="status-bar-progress bg-gray" 
                       style={{ width: `${(statusDistribution.retired / totalItems) * 100}%` }}
                     ></div>
                   </div>
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-4 mt-6">
-                <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-500">Total Categories</p>
-                  <p className="text-2xl font-semibold mt-1">4</p>
+              <div className="status-stats">
+                <div className="stat-box">
+                  <p>Total Categories</p>
+                  <p>4</p>
                 </div>
-                <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-500">Total Locations</p>
-                  <p className="text-2xl font-semibold mt-1">6</p>
+                <div className="stat-box">
+                  <p>Total Locations</p>
+                  <p>6</p>
                 </div>
               </div>
             </div>
@@ -275,43 +273,43 @@ const Dashboard = () => {
         </Card>
         
         {/* Recent Activity */}
-        <Card className="lg:col-span-3">
-          <CardHeader className="flex flex-row items-center justify-between">
+        <Card className="activity-card">
+          <CardHeader className="activity-card-header">
             <CardTitle>Recent Activity</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-0">
+            <div className="activity-list">
               <RecentActivityItem
-                icon={<Plus size={18} className="text-white" />}
-                iconColor="bg-success-600"
+                icon={<Plus size={18} className="activity-item-icon" />}
+                iconColor="bg-success"
                 title="New Laptop Added"
                 timestamp="Today, 10:30 AM"
                 description="Dell XPS 15 was added to inventory by Admin"
               />
               <RecentActivityItem
-                icon={<Repeat size={18} className="text-white" />}
-                iconColor="bg-accent-500"
+                icon={<Repeat size={18} className="activity-item-icon" />}
+                iconColor="bg-accent"
                 title="Status Change"
                 timestamp="Yesterday, 2:45 PM"
                 description="Projector #EP-X49-002 changed from Available to In Use"
               />
               <RecentActivityItem
-                icon={<AlertTriangle size={18} className="text-white" />}
-                iconColor="bg-warning-500"
+                icon={<AlertTriangle size={18} className="activity-item-icon" />}
+                iconColor="bg-warning"
                 title="Maintenance Required"
                 timestamp="Oct 15, 9:20 AM"
                 description="HP LaserJet Pro M404dn reported for paper jam issue"
               />
               <RecentActivityItem
-                icon={<CheckCircle size={18} className="text-white" />}
-                iconColor="bg-primary-600"
+                icon={<CheckCircle size={18} className="activity-item-icon" />}
+                iconColor="bg-primary"
                 title="Equipment Assigned"
                 timestamp="Oct 14, 11:05 AM"
                 description="Office Desk assigned to Dr. Smith in Faculty Office"
               />
               <RecentActivityItem
-                icon={<Package size={18} className="text-white" />}
-                iconColor="bg-secondary-600"
+                icon={<Package size={18} className="activity-item-icon" />}
+                iconColor="bg-secondary"
                 title="Inventory Audit"
                 timestamp="Oct 10, 3:30 PM"
                 description="Quarterly inventory audit completed by Storekeeper"

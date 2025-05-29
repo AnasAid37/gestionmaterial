@@ -4,6 +4,7 @@ import { useAuthStore } from '../../stores/authStore';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 import { LogIn } from 'lucide-react';
+import './LoginPage.css';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -29,7 +30,6 @@ const LoginPage = () => {
     }
   };
   
-  // Quick login buttons for demo purposes
   const handleQuickLogin = async (role) => {
     setIsLoading(true);
     setError('');
@@ -45,8 +45,8 @@ const LoginPage = () => {
   };
   
   return (
-    <div className="animate-fade-in">
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="login-container">
+      <form onSubmit={handleSubmit} className="login-form">
         <div>
           <Input
             id="email"
@@ -74,36 +74,36 @@ const LoginPage = () => {
           />
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
+        <div className="login-options">
+          <div className="remember-me">
             <input
               id="remember-me"
               name="remember-me"
               type="checkbox"
-              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+              className="remember-checkbox"
             />
-            <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+            <label htmlFor="remember-me" className="remember-label">
               Remember me
             </label>
           </div>
 
-          <div className="text-sm">
-            <a href="#" className="font-medium text-primary-600 hover:text-primary-500">
+          <div className="forgot-password">
+            <a href="#" className="forgot-link">
               Forgot your password?
             </a>
           </div>
         </div>
 
         {error && (
-          <div className="bg-error-50 border border-error-200 text-error-700 px-4 py-3 rounded relative" role="alert">
-            <span className="block sm:inline">{error}</span>
+          <div className="error-message" role="alert">
+            <span>{error}</span>
           </div>
         )}
 
         <div>
           <Button
             type="submit"
-            className="w-full"
+            className="login-button"
             isLoading={isLoading}
             icon={<LogIn size={18} />}
           >
@@ -112,23 +112,21 @@ const LoginPage = () => {
         </div>
       </form>
 
-      <div className="mt-6">
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300" />
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">Quick login for demo</span>
+      <div className="quick-login-container">
+        <div className="quick-login-divider">
+          <div className="divider-line"></div>
+          <div className="divider-text">
+            <span>Quick login for demo</span>
           </div>
         </div>
 
-        <div className="mt-6 grid grid-cols-3 gap-3">
+        <div className="quick-login-buttons">
           <Button
             type="button"
             variant="outline"
             onClick={() => handleQuickLogin('management')}
             disabled={isLoading}
-            className="w-full"
+            className="quick-login-button"
           >
             Management
           </Button>
@@ -137,7 +135,7 @@ const LoginPage = () => {
             variant="outline"
             onClick={() => handleQuickLogin('trainer')}
             disabled={isLoading}
-            className="w-full"
+            className="quick-login-button"
           >
             Trainer
           </Button>
@@ -146,7 +144,7 @@ const LoginPage = () => {
             variant="outline"
             onClick={() => handleQuickLogin('store')}
             disabled={isLoading}
-            className="w-full"
+            className="quick-login-button"
           >
             Storekeeper
           </Button>

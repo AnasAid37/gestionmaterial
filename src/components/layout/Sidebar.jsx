@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { twMerge } from 'tailwind-merge';
 import { 
   Home, 
   Package, 
@@ -12,19 +11,15 @@ import {
   X
 } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
+import './Sidebar.css'; // Import the CSS file
 
 const SidebarLink = ({ to, icon, label, active }) => {
   return (
     <Link
       to={to}
-      className={twMerge(
-        'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors',
-        active 
-          ? 'bg-primary-100 text-primary-900' 
-          : 'text-gray-700 hover:bg-gray-100'
-      )}
+      className={`sidebar-link ${active ? 'active' : ''}`}
     >
-      <span className="flex-shrink-0 w-5 h-5">{icon}</span>
+      <span className="sidebar-link-icon">{icon}</span>
       <span>{label}</span>
     </Link>
   );
@@ -52,7 +47,7 @@ const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
       {/* Mobile Overlay */}
       {isMobileOpen && (
         <div 
-          className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 lg:hidden"
+          className="mobile-overlay"
           onClick={onCloseMobile}
           aria-hidden="true"
         />
@@ -60,30 +55,27 @@ const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
       
       {/* Sidebar */}
       <aside
-        className={twMerge(
-          'fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:h-screen',
-          isMobileOpen ? 'translate-x-0' : '-translate-x-full'
-        )}
+        className={`sidebar ${isMobileOpen ? 'mobile-open' : ''}`}
       >
-        <div className="flex flex-col h-full">
+        <div className="sidebar-container">
           {/* Sidebar Header */}
-          <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
-            <Link to="/dashboard" className="flex items-center gap-2">
-              <span className="bg-primary-600 text-white p-1 rounded">
+          <div className="sidebar-header">
+            <Link to="/dashboard" className="sidebar-brand">
+              <span className="sidebar-brand-icon">
                 <Package size={20} />
               </span>
-              <span className="font-semibold text-xl">EduInventory</span>
+              <span className="sidebar-brand-text">EduInventory</span>
             </Link>
             <button
               onClick={onCloseMobile}
-              className="lg:hidden text-gray-500 hover:text-gray-700"
+              className="sidebar-close-button"
             >
               <X size={20} />
             </button>
           </div>
           
           {/* Navigation Links */}
-          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+          <nav className="sidebar-nav">
             {navigationItems
               .filter(item => item.showFor.includes(userRole))
               .map((item) => (
@@ -98,10 +90,10 @@ const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
           </nav>
           
           {/* Sidebar Footer */}
-          <div className="p-4 border-t border-gray-200">
+          <div className="sidebar-footer">
             <button
               onClick={logout}
-              className="flex items-center gap-3 px-3 py-2 w-full rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+              className="logout-button"
             >
               <LogOut size={18} />
               <span>Logout</span>

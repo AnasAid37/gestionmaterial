@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import { useInventoryStore, ItemStatus } from '../../stores/inventoryStore';
-import { BarChart2, Download, Filter, Printer, List, PieChart } from 'lucide-react';
+import React, { useState, useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
+import { useInventoryStore } from '../../stores/inventoryStore';
+import { BarChart2, Download, Filter, Printer, List, PieChart } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import Button from '../../components/ui/Button';
 import Select from '../../components/ui/Select';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/Card';
+import './ReportsPage.css';
 
 const ReportsPage = () => {
   const { items } = useInventoryStore();
   const [reportType, setReportType] = useState('inventory');
   const [timeFrame, setTimeFrame] = useState('all');
-  const printRef = React.useRef(null);
+  const printRef = useRef(null);
   
-  // Generate report data based on selected report type
   const getReportData = () => {
     switch (reportType) {
       case 'inventory':
@@ -29,7 +29,6 @@ const ReportsPage = () => {
     }
   };
   
-  // Get status distribution report
   const getStatusReport = () => {
     const statusCounts = {
       'available': 0,
@@ -49,7 +48,6 @@ const ReportsPage = () => {
     }));
   };
   
-  // Get category distribution report
   const getCategoryReport = () => {
     const categoryCounts = {};
     
@@ -64,7 +62,6 @@ const ReportsPage = () => {
     }));
   };
   
-  // Get location distribution report
   const getLocationReport = () => {
     const locationCounts = {};
     
@@ -79,7 +76,6 @@ const ReportsPage = () => {
     }));
   };
   
-  // Handle Excel export
   const handleExport = () => {
     const reportData = getReportData();
     const worksheet = XLSX.utils.json_to_sheet(reportData);
@@ -88,7 +84,6 @@ const ReportsPage = () => {
     XLSX.writeFile(workbook, `${reportType}_report.xlsx`);
   };
   
-  // Handle print function
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
   });
@@ -110,55 +105,31 @@ const ReportsPage = () => {
   
   const renderInventoryReport = () => {
     return (
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className="report-table-container">
+        <table className="report-table">
+          <thead>
             <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Item Name
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Category
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Serial Number
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Location
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Acquisition Date
-              </th>
+              <th>Item Name</th>
+              <th>Category</th>
+              <th>Serial Number</th>
+              <th>Status</th>
+              <th>Location</th>
+              <th>Acquisition Date</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody>
             {items.map((item) => (
               <tr key={item.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {item.name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {item.category}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {item.serialNumber}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                    ${item.status === 'available' ? 'bg-green-100 text-green-800' : 
-                    item.status === 'in-use' ? 'bg-blue-100 text-blue-800' : 
-                    item.status === 'maintenance' ? 'bg-yellow-100 text-yellow-800' : 
-                    'bg-gray-100 text-gray-800'}`}>
+                <td className="item-name">{item.name}</td>
+                <td className="item-category">{item.category}</td>
+                <td className="item-serial">{item.serialNumber}</td>
+                <td className="item-status">
+                  <span className={`status-badge ${item.status}`}>
                     {item.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {item.location}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="item-location">{item.location}</td>
+                <td className="item-date">
                   {new Date(item.acquisitionDate).toLocaleDateString()}
                 </td>
               </tr>
@@ -173,34 +144,29 @@ const ReportsPage = () => {
     const statusData = getStatusReport();
     
     return (
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="status-report">
+        <div className="status-cards">
           {statusData.map((status) => (
-            <Card key={status.status} className="bg-gray-50">
-              <CardContent className="p-4 text-center">
-                <h3 className="text-lg font-medium capitalize">{status.status}</h3>
-                <p className="text-3xl font-bold mt-2">{status.count}</p>
-                <p className="text-sm text-gray-500 mt-1">{status.percentage}% of total</p>
+            <Card key={status.status} className="status-card">
+              <CardContent className="status-card-content">
+                <h3 className="status-title">{status.status}</h3>
+                <p className="status-count">{status.count}</p>
+                <p className="status-percentage">{status.percentage}% of total</p>
               </CardContent>
             </Card>
           ))}
         </div>
         
-        <div className="space-y-3">
+        <div className="status-bars">
           {statusData.map((status) => (
-            <div key={status.status}>
-              <div className="flex justify-between mb-1">
-                <span className="text-sm font-medium capitalize">{status.status}</span>
-                <span className="text-sm font-medium">{status.count} items ({status.percentage}%)</span>
+            <div key={status.status} className="status-bar">
+              <div className="bar-header">
+                <span className="bar-label">{status.status}</span>
+                <span className="bar-value">{status.count} items ({status.percentage}%)</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2.5">
+              <div className="bar-track">
                 <div 
-                  className={`h-2.5 rounded-full ${
-                    status.status === 'available' ? 'bg-green-600' : 
-                    status.status === 'in-use' ? 'bg-blue-600' : 
-                    status.status === 'maintenance' ? 'bg-yellow-500' : 
-                    'bg-gray-500'
-                  }`} 
+                  className={`bar-progress ${status.status}`} 
                   style={{ width: `${status.percentage}%` }}
                 ></div>
               </div>
@@ -215,55 +181,42 @@ const ReportsPage = () => {
     const categoryData = getCategoryReport();
     
     return (
-      <div className="space-y-6">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+      <div className="category-report">
+        <div className="report-table-container">
+          <table className="report-table">
+            <thead>
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Category
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Count
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Percentage
-                </th>
+                <th>Category</th>
+                <th>Count</th>
+                <th>Percentage</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody>
               {categoryData.map((category) => (
                 <tr key={category.category}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {category.category}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {category.count}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {category.percentage}%
-                  </td>
+                  <td className="category-name">{category.category}</td>
+                  <td className="category-count">{category.count}</td>
+                  <td className="category-percentage">{category.percentage}%</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
         
-        <div className="space-y-3">
+        <div className="category-bars">
           {categoryData.map((category, index) => {
-            // Generate colors programmatically
-            const hue = (index * 137) % 360; // Golden ratio to distribute colors
+            const hue = (index * 137) % 360;
             const color = `hsl(${hue}, 70%, 60%)`;
             
             return (
-              <div key={category.category}>
-                <div className="flex justify-between mb-1">
-                  <span className="text-sm font-medium">{category.category}</span>
-                  <span className="text-sm font-medium">{category.count} items ({category.percentage}%)</span>
+              <div key={category.category} className="category-bar">
+                <div className="bar-header">
+                  <span className="bar-label">{category.category}</span>
+                  <span className="bar-value">{category.count} items ({category.percentage}%)</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                <div className="bar-track">
                   <div 
-                    className="h-2.5 rounded-full" 
+                    className="bar-progress" 
                     style={{ width: `${category.percentage}%`, backgroundColor: color }}
                   ></div>
                 </div>
@@ -279,34 +232,22 @@ const ReportsPage = () => {
     const locationData = getLocationReport();
     
     return (
-      <div className="space-y-6">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+      <div className="location-report">
+        <div className="report-table-container">
+          <table className="report-table">
+            <thead>
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Location
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Count
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Percentage
-                </th>
+                <th>Location</th>
+                <th>Count</th>
+                <th>Percentage</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody>
               {locationData.map((location) => (
                 <tr key={location.location}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {location.location}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {location.count}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {location.percentage}%
-                  </td>
+                  <td className="location-name">{location.location}</td>
+                  <td className="location-count">{location.count}</td>
+                  <td className="location-percentage">{location.percentage}%</td>
                 </tr>
               ))}
             </tbody>
@@ -317,13 +258,13 @@ const ReportsPage = () => {
   };
   
   return (
-    <div className="animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-semibold flex items-center gap-2">
+    <div className="reports-container">
+      <div className="reports-header">
+        <h1>
           <BarChart2 size={24} />
-          Reports
+          <span>Reports</span>
         </h1>
-        <div className="flex items-center gap-2">
+        <div className="report-actions">
           <Button
             variant="outline"
             icon={<Printer size={18} />}
@@ -342,9 +283,9 @@ const ReportsPage = () => {
       </div>
       
       {/* Report Configuration */}
-      <Card className="mb-6">
-        <CardContent className="p-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <Card className="report-config">
+        <CardContent className="config-content">
+          <div className="config-grid">
             <Select
               label="Report Type"
               options={[
@@ -369,11 +310,10 @@ const ReportsPage = () => {
               onChange={setTimeFrame}
             />
             
-            <div className="flex items-end">
+            <div className="config-reset">
               <Button 
                 variant="outline" 
                 icon={<Filter size={18} />}
-                className="w-full"
                 onClick={() => {
                   setReportType('inventory');
                   setTimeFrame('all');
@@ -388,8 +328,8 @@ const ReportsPage = () => {
       
       {/* Report Content */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between border-b">
-          <CardTitle className="flex items-center gap-2">
+        <CardHeader className="report-card-header">
+          <CardTitle className="report-title">
             {reportType === 'inventory' && <List size={18} />}
             {reportType === 'status' && <PieChart size={18} />}
             {reportType === 'category' && <PieChart size={18} />}
@@ -399,11 +339,11 @@ const ReportsPage = () => {
             {reportType === 'category' && 'Category Distribution Report'}
             {reportType === 'location' && 'Location Distribution Report'}
           </CardTitle>
-          <p className="text-sm text-gray-500">
+          <p className="report-count">
             Total Items: {items.length}
           </p>
         </CardHeader>
-        <CardContent ref={printRef} className="p-6">
+        <CardContent ref={printRef} className="report-content">
           {renderReportContent()}
         </CardContent>
       </Card>
